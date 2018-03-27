@@ -1,4 +1,4 @@
-# Hópverkefni 1 - _Vefforritun 2_ (HBV403G vor 2018)
+# [Hópverkefni 1](https://h1books.herokuapp.com/) - _Vefforritun 2_ (HBV403G vor 2018)
 
 <br>
 <hr>
