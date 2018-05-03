@@ -3,7 +3,7 @@ require('dotenv').config();
 const { query, queryMany } = require('./query');
 
 async function selectAllCategories(offset = 0, limit = 10) {
-  const result = await query('SELECT * FROM categories ORDER BY category OFFSET $1 LIMIT $2', [offset, limit]);
+  const result = await query('SELECT * FROM categories ORDER BY name OFFSET $1 LIMIT $2', [offset, limit]);
 
   return { LIMIT: limit, OFFSET: offset, items: result.rows };
 }
@@ -95,11 +95,11 @@ async function search(word, offset = 0, limit = 10) {
 }
 
 async function selectAllReviewsByUserId(id, offset = 0, limit = 10) {
-  const result = await query('SELECT * FROM review WHERE userid = $1 ORDER BY bookid OFFSET $2 LIMIT $3', [id, offset, limit]);
+  const result = await query('SELECT * FROM reads WHERE userid = $1 ORDER BY bookid OFFSET $2 LIMIT $3', [id, offset, limit]);
   return { LIMIT: limit, OFFSET: offset, items: result.rows };
 }
 async function selectReviewsByBookId(bookid) {
-  const result = await query('WITH reviews as (SELECT * from review WHERE bookid = $1), tmpusers as (select * from users where id in (select userid from reviews)) Select reviews.review, reviews.rating, reviews.title, reviews.date, tmpusers.username from reviews inner join tmpusers on reviews.userid = tmpusers.id', [bookid]);
+  const result = await query('WITH reviews as (SELECT * from reads WHERE bookid = $1), tmpusers as (select * from users where id in (select userid from reads)) Select reviews.review, reviews.rating, reviews.title, reviews.date, tmpusers.username from reads inner join tmpusers on reviews.userid = tmpusers.id', [bookid]);
 
   return result.rows;
 }
@@ -108,13 +108,13 @@ async function insertReview({
   userid, bookid, title, rating, review,
 } = {}) {
   const data = [userid, bookid, title, rating, review];
-  const result = await query('INSERT INTO review(userid, bookid, title, rating, review) VALUES($1, $2, $3, $4, $5) RETURNING *', data);
+  const result = await query('INSERT INTO reads(userid, bookid, title, rating, review) VALUES($1, $2, $3, $4, $5) RETURNING *', data);
 
   return result.rows[0];
 }
 
 async function deleteReviewById(id) {
-  const result = await query('DELETE FROM review where bookid = $1', [id]);
+  const result = await query('DELETE FROM reads where bookid = $1', [id]);
 
   return result.rowCount > 0;
 }
