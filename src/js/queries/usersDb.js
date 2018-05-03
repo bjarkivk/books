@@ -25,13 +25,13 @@ async function query(q, values = []) {
 }
 
 async function selectAllUsers(offset = 0, limit = 10) {
-  const result = await query('SELECT id, username, name, imagepath FROM users ORDER BY name OFFSET $1 LIMIT $2', [offset, limit]);
+  const result = await query('SELECT id, username, name, image FROM users ORDER BY name OFFSET $1 LIMIT $2', [offset, limit]);
 
   return { LIMIT: limit, OFFSET: offset, items: result.rows };
 }
 
 async function selectUserById(id) {
-  const result = await query('SELECT id, username, name, imagepath FROM users WHERE id = $1', [id]);
+  const result = await query('SELECT id, username, name, image FROM users WHERE id = $1', [id]);
   if (result.rowCount === 0) {
     return { error: 'User not found' };
   }
@@ -46,18 +46,18 @@ async function selectUserByIdAlternate(id) {
   return result.rows[0];
 }
 
-async function updateUserById(id, { name, passwordhash } = {}) {
-  const result = await query('UPDATE users SET name = $2, passwordhash = $3 WHERE id = $1 RETURNING *', [id, name, passwordhash]);
+async function updateUserById(id, { name, password } = {}) {
+  const result = await query('UPDATE users SET name = $2, password = $3 WHERE id = $1 RETURNING *', [id, name, password]);
 
   return result.rows[0];
 }
 
-async function insertNewUser({ username, passwordhash, name } = {}) {
-  const data = [username, passwordhash, name];
+async function insertNewUser({ username, password, name } = {}) {
+  const data = [username, password, name];
   const count = await query('SELECT username FROM users WHERE username = $1', [username]);
   let result = '';
   if (count.rowCount === 0) {
-    result = await query('INSERT INTO users(username, passwordhash, name) VALUES($1, $2, $3) RETURNING *', data);
+    result = await query('INSERT INTO users(username, password, name) VALUES($1, $2, $3) RETURNING *', data);
     return result.rows[0];
   }
 
@@ -70,7 +70,7 @@ async function selectUserByUsername(username) {
 }
 
 async function updateProfilePicture(id, imgUrl) {
-  const result = await query('UPDATE users SET imagepath = $1 WHERE id = $2 RETURNING id, name, username, imagepath', [imgUrl, id]);
+  const result = await query('UPDATE users SET imagepath = $1 WHERE id = $2 RETURNING id, name, username, image', [imgUrl, id]);
 
   return result.rowCount === 1 ? result.rows[0] : false;
 }
