@@ -11,7 +11,7 @@ async function selectAllCategories(offset = 0, limit = 10) {
 async function selectCategoryById(id) {
   const result = await query('SELECT * FROM categories where id = $1', [id]);
 
-  return result.rows[0].category;
+  return result.rows[0].name;
 }
 
 async function insertCategory(category, client) {
@@ -98,8 +98,9 @@ async function selectAllReviewsByUserId(id, offset = 0, limit = 10) {
   const result = await query('SELECT * FROM reads WHERE userid = $1 ORDER BY bookid OFFSET $2 LIMIT $3', [id, offset, limit]);
   return { LIMIT: limit, OFFSET: offset, items: result.rows };
 }
+
 async function selectReviewsByBookId(bookid) {
-  const result = await query('WITH reviews as (SELECT * from reads WHERE bookid = $1), tmpusers as (select * from users where id in (select userid from reads)) Select reviews.review, reviews.rating, reviews.title, reviews.date, tmpusers.username from reads inner join tmpusers on reviews.userid = tmpusers.id', [bookid]);
+  const result = await query('WITH reviews as (SELECT * from reads WHERE bookid = $1), tmpusers as (select * from users where id in (select userid from reviews)) Select reviews.review, reviews.rating, reviews.title, reviews.date, tmpusers.username from reviews inner join tmpusers on reviews.userid = tmpusers.id', [bookid]);
 
   return result.rows;
 }

@@ -26,14 +26,14 @@ block content
             .book__category
               .layer
               .bc__title
-                p #{categories[i].category}
+                p #{categories[i].name}
       .category__row.row
         - for(var i = 4; i < categories.length; i++)
           .col-3
             .book__category
               .layer
               .bc__title
-                p #{categories[i].category}
+                p #{categories[i].name}
     .best__sellers.section
       h3 Best sellers
       each book in bestsellers

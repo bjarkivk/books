@@ -1,14 +1,14 @@
 CREATE TABLE users (
     id serial primary key,
     username character varying(255) NOT NULL UNIQUE CHECK (char_length(username) >= 3),
-    passwordhash text NOT NULL,
+    password text NOT NULL,
     name character varying(255) NOT NULL CHECK (name <> ''),
-    imagepath text
+    image text
 );
 
 CREATE TABLE categories (
     id serial primary key,
-    category character varying(255) NOT NULL UNIQUE CHECK (category <> '')
+    name character varying(255) NOT NULL UNIQUE CHECK (category <> '')
 );
 
 CREATE TABLE books (
@@ -27,7 +27,7 @@ CREATE TABLE books (
     bsRank BIGINT CHECK (bsRank >= -1)
 );
 
-CREATE TABLE review (
+CREATE TABLE reads (
     id serial primary key,
     userid integer NOT NULL REFERENCES users,
     bookid integer NOT NULL REFERENCES books,
